@@ -4,6 +4,11 @@ import React from 'react';
 import TextField from '@/components/TextField';
 import render from '@/utils/test/render';
 
+// my-class란 class가 항상 적용된 컴포넌트를 렌더링.
+beforeEach(async () => {
+  await render(<TextField className="my-class" />);
+});
+
 it('className prop으로 설정한 css class가 적용된다.', async () => {
   //Arrange = 테스트를 위한 환경 만들기.
   // -> className을 지닌 컴포넌트 렌더링.
@@ -15,7 +20,6 @@ it('className prop으로 설정한 css class가 적용된다.', async () => {
 
   // render API를 호출 -> 테스트 환경의 jsDOM에 리액트 컴포넌트가 렌더링 된 DOM 구조가 반영
   // jsDOM: Node.js에서 사용하기 위해 많은 웹 표준을 순수 자바스크립트로 구현.
-  await render(<TextField className="my-class" />);
 
   const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
 
@@ -30,7 +34,6 @@ it('className prop으로 설정한 css class가 적용된다.', async () => {
 
 describe('placeholder', () => {
   it('기본 placeholder"텍스트를 입력해 주세요."가 노출된다.', async () => {
-    await render(<TextField />);
     const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
     expect(textInput).toBeInTheDocument();
   });
