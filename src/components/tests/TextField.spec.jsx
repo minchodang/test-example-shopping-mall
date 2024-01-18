@@ -5,11 +5,12 @@ import TextField from '@/components/TextField';
 import render from '@/utils/test/render';
 
 // my-class란 class가 항상 적용된 컴포넌트를 렌더링.
-beforeEach(async () => {
-  await render(<TextField className="my-class" />);
-});
+// beforeEach(async () => {
+//   await render(<TextField className="my-class" />);
+// });
 
 it('className prop으로 설정한 css class가 적용된다.', async () => {
+  await render(<TextField className="my-class" />);
   //Arrange = 테스트를 위한 환경 만들기.
   // -> className을 지닌 컴포넌트 렌더링.
   //Act - 테스트할 동작 발생.
@@ -34,6 +35,7 @@ it('className prop으로 설정한 css class가 적용된다.', async () => {
 
 describe('placeholder', () => {
   it('기본 placeholder"텍스트를 입력해 주세요."가 노출된다.', async () => {
+    await render(<TextField placeholder="텍스트를 입력해 주세요." />);
     const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
     expect(textInput).toBeInTheDocument();
   });
@@ -41,5 +43,44 @@ describe('placeholder', () => {
     await render(<TextField placeholder="상품명을 입력해 주세요." />);
     const textInput = screen.getByPlaceholderText('상품명을 입력해 주세요.');
     expect(textInput).toBeInTheDocument();
+  });
+});
+
+it('테스트를 입력하면 onChange props으로 등록한 함수가 호출된다.', async () => {
+  const spy = vi.fn(); //스파이 함수.
+  // 스파이 함수: 테스트 코드에서 특정 함수 호출여부와 함수의 인자, 반환 값 등을 테스트 가능.
+
+  const { user } = await render(<TextField onChange={spy} />);
+  const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
+  await user.type(textInput, 'test');
+
+  expect(spy).toHaveBeenCalledWith('test');
+});
+
+it('엔터키를 입력하면 onEnter props으로 등록한 함수가 호출된다.', async () => {
+  const spy = vi.fn();
+
+  const { user } = await render(<TextField onEnter={spy} />);
+  const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
+  await user.type(textInput, 'test{Enter}');
+
+  expect(spy).toHaveBeenCalledWith('test');
+});
+it('포커스가 활성화되면 onFocus props으로 등록한 함수가 호출된다.', async () => {
+  const spy = vi.fn();
+
+  const { user } = await render(<TextField onFocus={spy} />);
+  const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
+  await user.click(textInput);
+  expect(spy).toHaveBeenCalled();
+});
+
+it('포커스가 활성화되면  border 스타일 추가', async () => {
+  const { user } = await render(<TextField />);
+  const textInput = screen.getByPlaceholderText('텍스트를 입력해 주세요.');
+  await user.click(textInput);
+  expect(textInput).toHaveStyle({
+    borderWidth: 2,
+    borderColor: 'rgb(25, 118, 210)',
   });
 });
